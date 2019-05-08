@@ -40,9 +40,8 @@
                 <td>{{$product->name}}</td>
                 <td>{{($product->category) ? $product->category->name : ''}}</td>
                 <td>
-                    @if($product->filename)
-                        <img class="card" style="width: 200px;height: 200px;"
-                             src="{{url('uploads/'.$product->filename)}}" alt="{{$product->filename}}">
+                    @if($product->image)
+                        <img class="card" style="height: 200px; width: 200px" src="{{url('uploads/'.$product->image)}}" alt="{{$product->image}}">
                     @endif
                 </td>
                 <td>

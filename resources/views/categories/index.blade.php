@@ -9,7 +9,7 @@
             </div>
             <div class="pull-right">
                 @can('role-create')
-                    <a class="btn btn-success" href="{{ route('roles.create') }}"> Create New Category</a>
+                    <a class="btn btn-success" href="{{ route('categories.create') }}"> Create New Category</a>
                 @endcan
             </div>
         </div>
@@ -43,14 +43,14 @@
                         <a href="{{ route('categories.edit',$category->id)}}" class="btn btn-primary">Edit</a>
                     @endcan
                     @can('category-delete')
-
-                        <form action="{{ route('categories.destroy', $category->id)}}" method="post" style="display:inline;">
+                        <form action="{{ route('categories.destroy', $category->id)}}" method="post"
+                              style="display:inline;">
                             @csrf
                             @method('DELETE')
                             <button class="btn btn-danger" type="submit">Delete</button>
                         </form>
+                    @endcan
                 </td>
-                @endcan
             </tr>
         @endforeach
         </tbody>

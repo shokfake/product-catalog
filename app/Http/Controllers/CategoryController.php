@@ -112,11 +112,11 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Category $category)
     {
-        $category = Category::find($id);
+//        $category = Category::find($id);
         $category->delete();
 
-        return redirect('/categories')->with('success', 'Category has been updated');
+        return redirect()->route('categories.index')->with('success', 'Category has been updated');
     }
 }

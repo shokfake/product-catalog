@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @property Category category
  * @property string name
+ * @property string image
  * @property int category_id
  */
 class Product extends Model
@@ -20,7 +21,7 @@ class Product extends Model
      * @var array
      */
     protected $fillable = [
-        'name',
+        'name', 'image', 'category_id'
     ];
 
     /**
@@ -28,6 +29,6 @@ class Product extends Model
      */
     public function category()
     {
-        return $this->belongsTo(Category::class,'category_id');
+        return $this->belongsTo(Category::class, 'category_id');
     }
 }

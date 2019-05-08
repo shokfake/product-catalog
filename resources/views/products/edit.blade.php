@@ -37,12 +37,12 @@
             {!! Form::Label('category', 'Categories:') !!}
             {!! Form::select('category', $categories, $product->category_id, ['class' => 'form-control']) !!}
         </div>
-        @if(! empty($product->filename))
-            <img class="card" style="width: 200px;height: 200px;" src="{{url('uploads/'.$product->filename)}}" alt="{{$product->filename}}">
+        @if(! empty($product->image))
+            <img class="card" style="width: 200px;height: 200px;" src="{{url('uploads/'.$product->image)}}" alt="{{$product->image}}">
         @endif
         <div class="form-group">
             <label for="image">Image:</label>
-            <input id="image" type="file" class="form-control-file" name="image" value="{{$product->filename}}"/>
+            <input id="image" type="file" class="form-control-file" name="image" value="{{$product->image}}"/>
         </div>
         <button type="submit" class="btn btn-primary">Update</button>
     </form>
