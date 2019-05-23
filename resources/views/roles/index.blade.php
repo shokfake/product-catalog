@@ -2,6 +2,7 @@
 
 
 @section('content')
+
     <div class="row">
         <div class="col-lg-12 margin-tb">
             <div class="pull-left">
@@ -17,6 +18,7 @@
 
 
     @if ($message = Session::get('success'))
+
         <div class="alert alert-success">
             <p>{{ $message }}</p>
         </div>
@@ -36,7 +38,6 @@
                 <td>{{ ++$i }}</td>
                 <td>{{ $role->name }}</td>
                 <td>
-                    <a class="btn btn-info" href="{{ route('roles.show',$role->id) }}">Show</a>
                     @can('role-edit')
                         <a class="btn btn-primary" href="{{ route('roles.edit',$role->id) }}">Edit</a>
                     @endcan

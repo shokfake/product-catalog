@@ -5,7 +5,9 @@ namespace App\Console\Commands;
 use App\Mail\AddedProducts;
 use App\Product;
 use Illuminate\Console\Command;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Mail;
+use Spatie\Permission\Models\Role;
 
 class SendEmails extends Command
 {
@@ -36,11 +38,14 @@ class SendEmails extends Command
     /**
      * Execute the console command.
      *
-     * @return mixed
+     * @return void
      */
     public function handle()
     {
-        $products = Product::all();
-        Mail::to('shokfake@gmail.com')->send(new AddedProducts($products));
+        $superUsers = Role::findByName('Super Admin');
+        $products = Product::all()->where('created_at', '>=', Carbon::today()->toDateString());
+        foreach ($superUsers->users as $users) {
+            Mail::to($users->email)->send(new AddedProducts($products));
+        }
     }
 }

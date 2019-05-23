@@ -15,7 +15,11 @@ class Category extends Model
         return $this->hasMany(Product::class);
     }
 
-    public function users() {
+    public function attributes() {
+        return $this->hasMany(CategoryAttributes::class);
+    }
+
+    public function user() {
         return $this->belongsTo(User::class,'user_id');
     }
 }

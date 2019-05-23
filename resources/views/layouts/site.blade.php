@@ -18,9 +18,6 @@
     <script src="{{ asset('js/bootstrap.bundle.min.js') }}" defer></script>
     <script src="{{ asset('css/bootstrap.css') }}" defer></script>
     <script src="{{ asset('fonts/fontawesome/css/fontawesome-all.min.css') }}" defer></script>
-    <script src="{{ asset('plugins/owlcarousel/assets/owl.carousel.min.css') }}" defer></script>
-    <script src="{{ asset('plugins/owlcarousel/assets/owl.theme.default.min.css') }}" defer></script>
-    <script src="{{ asset('plugins/owlcarousel/owl.carousel.min.js') }}" defer></script>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/responsive.css') }}" rel="stylesheet">
     <link href="{{ asset('css/ui.css') }}" rel="stylesheet">

@@ -34,8 +34,7 @@
             <input type="text" class="form-control" name="name" value={{ $product->name }} />
         </div>
         <div class="form-group">
-            {!! Form::Label('category', 'Categories:') !!}
-            {!! Form::select('category', $categories, $product->category_id, ['class' => 'form-control']) !!}
+            <product-attribute v-bind:attributes="{{\GuzzleHttp\json_encode($attributes)}}" v-bind:selected="{{$product->category_id}}" v-bind:categories="{{\GuzzleHttp\json_encode($categories)}}"></product-attribute>
         </div>
         @if(! empty($product->image))
             <img class="card" style="width: 200px;height: 200px;" src="{{url('uploads/'.$product->image)}}" alt="{{$product->image}}">

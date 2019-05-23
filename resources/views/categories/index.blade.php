@@ -37,7 +37,7 @@
             <tr>
                 <td>{{$category->id}}</td>
                 <td>{{$category->name}}</td>
-                <td>{{($category->users) ? $category->users->name : ''}}</td>
+                <td>{{($category->user) ? $category->user->name : ''}}</td>
                 <td>
                     @can('category-edit')
                         <a href="{{ route('categories.edit',$category->id)}}" class="btn btn-primary">Edit</a>

@@ -1,19 +1,14 @@
 <?php
 
-
 namespace App;
-
 
 use Illuminate\Database\Eloquent\Model;
 
-
 /**
- * @property Category category
- * @property string name
- * @property string image
+ * @property mixed name
  * @property int category_id
  */
-class Product extends Model
+class CategoryAttributes extends Model
 {
     /**
      * The attributes that are mass assignable.
@@ -21,18 +16,13 @@ class Product extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'image', 'category_id'
+        'id', 'name', 'category_id'
     ];
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
     public function category()
     {
         return $this->belongsTo(Category::class, 'category_id');
     }
 
-    public function attributes() {
-        return $this->hasMany(ProductAttributesValue::class);
-    }
+
 }

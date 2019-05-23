@@ -31,6 +31,9 @@
                         {!! Form::Label('user', 'Users:') !!}
                         {!! Form::select('user', $users, null, ['class' => 'form-control','placeholder' => 'Please Select']) !!}
                     </div>
+                    <div class="form-group">
+                        <category-attribute/>
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-primary">Add</button>
             </form>

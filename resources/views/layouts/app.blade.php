@@ -8,14 +8,9 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
-    <script src="{{ asset('js/bootstrap.bundle.min.js') }}" defer></script>
     <!-- Fonts -->
-    <link rel="stylesheet" href="{{asset('fonts/fontawesome/css/fontawesome-all.css')}}">
+    <link rel="stylesheet" href="{{asset('css/app.css')}}">
 
-    <!-- Styles -->
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/responsive.css')}}" rel="stylesheet">
-    <link href="{{ asset('css/ui.css') }}" rel="stylesheet">
 </head>
 <body>
 <div id="app">

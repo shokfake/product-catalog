@@ -13,12 +13,19 @@ use Illuminate\Http\Request;
  **
  **/
 
+//Route::get('products','Api\ProductController@index');
+//
+//Route::get('products/{product}', 'Api\ProductController@show');
+//
+//Route::post('products', 'Api\ProductController@store');
+//
+//Route::put('products/{product}','Api\ProductController@update');
+//
+//Route::delete('products/{product}','Api\ProductController@delete');
+
 Route::get('products','Api\ProductController@index');
-
-Route::get('products/{product}', 'Api\ProductController@show');
-
-Route::post('products', 'Api\ProductController@store');
-
-Route::put('products/{product}','Api\ProductController@update');
-
-Route::delete('products/{product}','Api\ProductController@delete');
+Route::get('categories/{id}/attributes','CategoryController@attributes');
+Route::get('categories/{id}/products','CategoryController@products');
+Route::get('products/{id}/attributes','ProductController@attributes');
+Route::post('attributes/{id}','AttributeController@update');
+Route::delete('attributes/{id}','AttributeController@delete');

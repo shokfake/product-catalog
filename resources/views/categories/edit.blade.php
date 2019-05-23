@@ -18,19 +18,26 @@
                             <li>{{ $error }}</li>
                         @endforeach
                     </ul>
-                </div><br />
+                </div><br/>
             @endif
             <form method="post" action="{{ route('categories.update', $category->id) }}">
-                @method('PATCH')
-                @csrf
                 <div class="form-group">
-                    <label for="name">Category Name:</label>
-                    <input type="text" class="form-control" name="name" value={{ $category->name }} />
+                    @method('PATCH')
+                    @csrf
+                    <div class="form-group">
+                        <label for="name">Category Name:</label>
+                        <input type="text" class="form-control" name="name" value={{ $category->name }} />
+                    </div>
+                    <div class="form-group">
+                        {!! Form::Label('user', 'Users:') !!}
+                        {!! Form::select('user', $users, $category->user_id ?? ' ', ['class' => 'form-control']) !!}
+                    </div>
+                    <div class="form-group">
+                        <category-attribute v-bind:isSaveButton="true"
+                                            v-bind:attributes="{{$attributes}}"></category-attribute>
+                    </div>
                 </div>
-                <div class="form-group">
-                    {!! Form::Label('user', 'Users:') !!}
-                    {!! Form::select('user', $users, $category->user_id ?? ' ', ['class' => 'form-control']) !!}
-                </div>
+
                 <button type="submit" class="btn btn-primary">Update</button>
             </form>
         </div>
