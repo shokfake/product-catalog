@@ -3,17 +3,17 @@
 
 @section('content')
     <div class="row">
-        <div class="col-lg-12">
+        <div class="col-lg-12 margin-tb">
             <div class="pull-left">
-                <h2>Users Management</h2>
+                <h2>Users</h2>
             </div>
             <div class="pull-right">
-                <a class="btn btn-success" href="{{ route('users.create') }}"> Create New User</a>
+                <a class="btn btn-success" href="{{ route('users.create') }}"> Create New Product</a>
             </div>
         </div>
     </div>
 
-<div class="row">
+
     @if ($message = Session::get('success'))
         <div class="alert alert-success">
             <p>{{ $message }}</p>
@@ -21,41 +21,43 @@
     @endif
 
 
-    <div class="col-12">
-        <table class="table table-striped">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Roles</th>
+            <td colspan="2">Action</td>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach($users as $user)
             <tr>
-                <th>No</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Roles</th>
-                <th width="280px">Action</th>
+                <td>{{ $user->name }}</td>
+                <td>{{ $user->email }}</td>
+                <td>
+                    @if(!empty($user->getRoleNames()))
+                        @foreach($user->getRoleNames() as $role)
+                            <label class="badge badge-success">{{ $role }}</label>
+                        @endforeach
+                    @endif
+                </td>
+                <td>
+                    <a href="{{ route('users.edit',$user->id)}}" class="btn btn-primary">Edit</a>
+                    <form action="{{ route('users.destroy', $user->id)}}" method="post"
+                          style="display:inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button class="btn btn-danger" type="submit"> Delete</button>
+                    </form>
+                </td>
             </tr>
-            @foreach ($data as $key => $user)
-                <tr>
-                    <td>{{ ++$i }}</td>
-                    <td>{{ $user->name }}</td>
-                    <td>{{ $user->email }}</td>
-                    <td>
-                        @if(!empty($user->getRoleNames()))
-                            @foreach($user->getRoleNames() as $v)
-                                <label class="badge badge-success">{{ $v }}</label>
-                            @endforeach
-                        @endif
-                    </td>
-                    <td>
-                        <a class="btn btn-primary" href="{{ route('users.edit',$user->id) }}">Edit</a>
-                        {!! Form::open(['method' => 'DELETE','route' => ['users.destroy', $user->id],'style'=>'display:inline']) !!}
-                        {!! Form::submit('Delete', ['class' => 'btn btn-danger']) !!}
-                        {!! Form::close() !!}
-                    </td>
-                </tr>
-            @endforeach
-        </table>
+        @endforeach
+        </tbody>
+    </table>
 
-    </div>
-    </div>
 
-    {!! $data->render() !!}
+    {!! $users->links() !!}
 
 
 @endsection

@@ -18,7 +18,7 @@
                 <div class="row">
                     @foreach ($products as $product)
                         <div class="col-md-4">
-                            <card class="card" :product="{{$product}}"></card>
+                            <card class="card" :product="{{json_encode(new \App\Http\Resources\ProductResource($product))}}"></card>
                         </div>
                     @endforeach
 

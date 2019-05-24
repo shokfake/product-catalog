@@ -81,13 +81,14 @@ class ProductController extends Controller
             $product->image = $filename;
         };
         $product->save();
-        foreach ($request->get('attributes') as $id => $value) {
-            $name = array_keys($value);
-            $attribute = new ProductAttributesValue();
-            $attribute->product_id = $product->id;
-            $attribute->category_attribute_id = $name;
-            $attribute->value = $value[$name];
-            $attribute->save();
+
+        foreach ($request->get('attributes') as $value) {
+            ProductAttributesValue::updateOrCreate(['value' => $value],[
+                'product_id' => $product->id,
+                'category_attribute_id' =>$value['id'],
+                'value' =>$value['value'],
+            ]);
+
 
         }
 

@@ -27,8 +27,6 @@ Vue.component('category-attribute', require('./components/attributes/CategoryAtt
 Vue.component('product-attribute', require('./components/attributes/ProductAttributeComponent.vue').default);
 Vue.component('home-page', require('./components/HomePage.vue').default);
 Vue.component('card', require('./components/Card.vue').default);
-Vue.component('categories', require('./components/Categories.vue').default);
-// Vue.component('attribute', require('./components/attributes/AttributeComponent.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

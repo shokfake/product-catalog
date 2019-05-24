@@ -6,7 +6,7 @@
         <div class="product-items">
             <ul class="list-group list-group-flush">
                 <li class="list-group-item" v-bind:key = "attribute.id" v-for="attribute in product.attributes">
-                    {{attribute.name}} : {{attribute.value}}
+                    <b>{{attribute.name}}</b> : {{attribute.value}}
                 </li>
             </ul>
         </div>
@@ -28,11 +28,11 @@ export default {
     data() {
         return {
             product: this.product,
-            // attributes: {},
         }
     },
     computed: {
         image: function () {
+            console.log(this.product);
             const url = "http://127.0.0.1:8000/";
             return `${url}uploads/${this.product.image}`;
         },

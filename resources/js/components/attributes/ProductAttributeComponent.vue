@@ -4,9 +4,11 @@
             <option v-for="category in categories" v-bind:value="category.id">{{category.name}}</option>
         </select>
 
-    <div class="form-group" v-for="attribute in attributes">
+    <div class="form-group" v-for="(attribute,index) in attributes">
         <label >{{attribute.name}}</label>
-        <input  type="text" v-model="attribute.value" v-bind:name="getInputName(attribute)" class="form-control"/>
+        <input  type="hidden" v-bind:name="getInputName(index,'id')" v-model="attribute.id" class="form-control"/>
+        <input  type="hidden" v-bind:name="getInputName(index, 'name')" v-model="attribute.name" class="form-control"/>
+        <input  type="text" v-bind:name="getInputName(index, 'value')" v-model="attribute.value" class="form-control"/>
         </div>
     </div>
 </template>
@@ -49,8 +51,8 @@ export default {
                 .then(response => (this.attributes = response.data))
                 .catch(error => console.log(error));
         },
-        getInputName(attribute) {
-            return `attributes['${attribute.id}']['${attribute.name}']`;
+        getInputName(attribute, name) {
+            return `attributes[${attribute}][${name}]`;
         },
     }
 }

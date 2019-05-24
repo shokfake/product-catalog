@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ProductAttributesValue extends Model
 {
+    protected $fillable = ['category_attribute_id','product_id','value'];
     public function product() {
         return $this->belongsTo(Product::class,'product_id');
     }
