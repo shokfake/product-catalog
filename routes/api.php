@@ -25,7 +25,7 @@ use Illuminate\Http\Request;
 
 Route::get('products','Api\ProductController@index');
 Route::get('categories/{id}/attributes','CategoryController@attributes');
-Route::get('categories/{id}/products','CategoryController@products');
-Route::get('products/{id}/attributes','ProductController@attributes');
-Route::post('attributes/{id}','AttributeController@update');
-Route::delete('attributes/{id}','AttributeController@delete');
+//Route::get('categories/{id}/products','CategoryController@products');
+//Route::get('products/{id}/attributes','ProductController@attributes');
+//Route::post('attributes/{id}','AttributeController@update');
+//Route::delete('attributes/{id}','AttributeController@delete');

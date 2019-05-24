@@ -31,7 +31,7 @@
             <label for="name">Product Name:</label>
             <input id="name" type="text" class="form-control" name="name"/>
         </div>
-        <product-attribute v-bind:categories="{{\GuzzleHttp\json_encode($categories)}}"></product-attribute>
+        <product-attribute :categories="{{$categories}}" ></product-attribute>
         <div class="form-group">
             <label for="image">Image:</label>
             <input id="image" type="file" class="form-control-file" name="image"/>

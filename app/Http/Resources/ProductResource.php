@@ -5,12 +5,12 @@ namespace App\Http\Resources;
 
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\Resource;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @property mixed category
  */
-class ProductResource extends Resource
+class ProductResource extends JsonResource
 {
 
     /**
@@ -24,7 +24,9 @@ class ProductResource extends Resource
        return [
            'id' => $this->id,
            'name' => $this->name,
+           'image' => $this->image,
            'category' => $this->category->name,
+           'attributes' =>  AttributeResource::collection($this->attributes),
            'user' => $this->category->user->name,
        ];
     }

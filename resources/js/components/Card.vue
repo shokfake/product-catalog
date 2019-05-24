@@ -5,7 +5,7 @@
         <h3>{{product.name}}</h3>
         <div class="product-items">
             <ul class="list-group list-group-flush">
-                <li class="list-group-item" v-bind:key = "attribute.id" v-for="attribute in attributes">
+                <li class="list-group-item" v-bind:key = "attribute.id" v-for="attribute in product.attributes">
                     {{attribute.name}} : {{attribute.value}}
                 </li>
             </ul>
@@ -28,7 +28,7 @@ export default {
     data() {
         return {
             product: this.product,
-            attributes: {},
+            // attributes: {},
         }
     },
     computed: {
@@ -37,13 +37,6 @@ export default {
             return `${url}uploads/${this.product.image}`;
         },
     },
-    mounted() {
-        let url = `http://127.0.0.1:8000/api/products/${this.product.id}/attributes`;
-        axios
-            .get(url)
-            .then(response => (this.attributes = response.data))
-            .catch(error => this.attributes = {});
-    }
 }
 </script>
 

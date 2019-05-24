@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Category;
+use App\Http\Resources\AttributeResource;
 use App\Product;
 use App\ProductAttributesValue;
 use App\User;
@@ -35,8 +36,7 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::latest()->paginate(5);
-        return view('products.index', compact('products'))
-            ->with('i', (request()->input('page', 1) - 1) * 5);
+        return view('products.index', compact('products'));
     }
 
 
@@ -81,12 +81,12 @@ class ProductController extends Controller
             $product->image = $filename;
         };
         $product->save();
-
         foreach ($request->get('attributes') as $id => $value) {
+            $name = array_keys($value);
             $attribute = new ProductAttributesValue();
             $attribute->product_id = $product->id;
-            $attribute->category_attribute_id = (int)$id;
-            $attribute->value = $value;
+            $attribute->category_attribute_id = $name;
+            $attribute->value = $value[$name];
             $attribute->save();
 
         }
@@ -95,19 +95,6 @@ class ProductController extends Controller
         return redirect()->route('products.index')
             ->with('success', 'Product created successfully.');
     }
-
-
-    /**
-     * Display the specified resource.
-     *
-     * @param \App\Product $product
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Product $product)
-    {
-        return view('products.show', compact('product'));
-    }
-
 
     /**
      * Show the form for editing the specified resource.
@@ -119,16 +106,12 @@ class ProductController extends Controller
     {
         $users = Auth::user();
         $categories = Auth::user()->categories->pluck('name', 'id');
+
         if ($users->hasRole('Super Admin')) {
             $categories = Category::all();
         }
 
-        $attributes = \DB::table('product_attributes_values')
-            ->join('category_attributes', 'product_attributes_values.category_attribute_id', '=', 'category_attributes.id')
-            ->join('products', 'product_attributes_values.product_id', '=', 'products.id')
-            ->where('product_attributes_values.product_id', $product->id)
-            ->select('product_attributes_values.*', 'category_attributes.name', 'product_attributes_values.value')
-            ->get('name', 'value');
+        $attributes = AttributeResource::collection($product->attributes);
 
         return view('products.edit', compact('product', 'categories', 'attributes'));
     }
@@ -159,10 +142,14 @@ class ProductController extends Controller
             $product->image = $filename;
         };
 
-        foreach ($request->get('attributes') as $id => $value) {
-            $attribute = ProductAttributesValue::find($id);
-            $attribute->value = $value;
-            $attribute->update();
+        dd($request->get('attributes'));
+
+        foreach ($request->get('attributes') as $name => $value) {
+            ProductAttributesValue::updateOrCreate(['value' => $value],[
+                'product_id' => $product->id,
+                'category_attribute_id' =>$value,
+                'value' =>$value,
+                ]);
 
         }
 

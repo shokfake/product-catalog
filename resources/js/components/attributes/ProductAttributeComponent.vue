@@ -6,7 +6,7 @@
 
     <div class="form-group" v-for="attribute in attributes">
         <label >{{attribute.name}}</label>
-        <input  type="text" v-model="attribute.value" v-bind:name="getInputName(attribute.id)" class="form-control"/>
+        <input  type="text" v-model="attribute.value" v-bind:name="getInputName(attribute)" class="form-control"/>
         </div>
     </div>
 </template>
@@ -33,6 +33,7 @@ export default {
         },
     },
     data() {
+        console.log(this.attributes);
         return {
             categories: this.categories,
             selected: this.selected,
@@ -48,17 +49,9 @@ export default {
                 .then(response => (this.attributes = response.data))
                 .catch(error => console.log(error));
         },
-        getInputName(dataName) {
-            return "attributes[" + dataName + "]";
-        }
-    },
-    created() {
-        let url = `http://127.0.0.1:8000/api/categories/${this.selected}/attributes`;
-
-        axios
-            .get(url)
-            .then(response => (this.attributes = response.data))
-            .catch(error => console.log(error));
+        getInputName(attribute) {
+            return `attributes['${attribute.id}']['${attribute.name}']`;
+        },
     }
 }
 </script>

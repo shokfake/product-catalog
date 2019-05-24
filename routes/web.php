@@ -11,15 +11,13 @@
 |
 */
 
-Route::get('/', 'HomeController@index');
+Route::get('/', 'HomeController@index')->name('home');
 
 Auth::routes();
 
-//Route::get('/home', 'HomeController@index')->name('home');
-//Route::group(['middleware' => ['auth']], function() {
 Route::prefix('admin')->middleware('auth')->group(function() {
     Route::resource('roles','RoleController');
     Route::resource('users','UserController');
-    Route::resource('categories','CategoryController');
-    Route::resource('products','ProductController');
+    Route::resource('categories','CategoryController')->except('show');
+    Route::resource('products','ProductController')->except('show');
 });

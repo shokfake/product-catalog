@@ -12,9 +12,14 @@ class HomeController extends Controller
 
     public function index(Request $request)
     {
-        $products = Product::query()->orderBy('id','desc');
-        $products = \GuzzleHttp\json_encode($products->get());
-        $categories = \GuzzleHttp\json_encode(Category::all());
-        return view('home', ['products' => $products, 'categories'=> $categories]);
+        $products = Product::query()->orderBy('id', 'desc');
+
+        if ($request->has('category')) {
+            $products->where('category_id', '=', $request->get('category'));
+        }
+
+
+        $categories = Category::all();
+        return view('home', ['products' => $products->paginate(6), 'categories' => $categories]);
     }
 }
