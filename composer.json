@@ -15,11 +15,13 @@
         "laravel/tinker": "^1.0",
         "laravelcollective/html": "^5.8",
         "league/flysystem-aws-s3-v3": "^1.0",
-        "spatie/laravel-permission": "^2.37"
+        "spatie/laravel-permission": "^2.37",
+      "ext-json": "*"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.6",
         "beyondcode/laravel-dump-server": "^1.0",
+        "doctrine/dbal": "^2.9",
         "filp/whoops": "^2.0",
         "fzaninotto/faker": "^1.4",
         "intervention/image": "^2.4",

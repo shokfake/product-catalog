@@ -56,7 +56,6 @@ class UserController extends Controller
             'roles' => 'required'
         ]);
 
-
         $input = $request->all();
         $input['password'] = Hash::make($input['password']);
 

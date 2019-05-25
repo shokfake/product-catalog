@@ -8,10 +8,26 @@ use Illuminate\Database\Eloquent\Model;
 
 
 /**
+ * App\Product
+ *
  * @property Category category
  * @property string name
  * @property string image
  * @property int category_id
+ * @property int $id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\ProductAttributesValue[] $attributes
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Product newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Product newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Product query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Product whereCategoryId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Product whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Product whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Product whereImage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Product whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Product whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class Product extends Model
 {

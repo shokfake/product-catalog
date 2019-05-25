@@ -19,40 +19,39 @@ export default {
     props: {
         selected: {
             type: Number,
+            require:false,
             default: 0,
         },
         categories: {
-            type: Object,
+            type: Array,
+            require:false,
             default: function () {
-                return {};
+                return [];
             }
         },
         attributes: {
-            type: Object,
+            type: Array,
+            require:false,
             default: function () {
-                return {};
+                return [];
             }
         },
     },
     data() {
-        console.log(this.attributes);
         return {
-            categories: this.categories,
-            selected: this.selected,
-            attributes: this.attributes,
         }
     },
     methods: {
         categoriesHandler() {
-            let url = `http://127.0.0.1:8000/api/categories/${this.selected}/attributes`;
+            let url = `http://localhost:8000/api/categories/${this.selected}/attributes`;
 
             axios
                 .get(url)
                 .then(response => (this.attributes = response.data))
                 .catch(error => console.log(error));
         },
-        getInputName(attribute, name) {
-            return `attributes[${attribute}][${name}]`;
+        getInputName(index, name) {
+            return `attributes[${index}][${name}]`;
         },
     }
 }

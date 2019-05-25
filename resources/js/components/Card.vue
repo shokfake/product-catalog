@@ -1,5 +1,5 @@
 <template>
-<div class="product-item">
+<div class="product-item col-md-1">
     <img v-bind:src="image" class="rounded mx-auto d-block">
     <div class="product-list">
         <h3>{{product.name}}</h3>
@@ -33,7 +33,7 @@ export default {
     computed: {
         image: function () {
             console.log(this.product);
-            const url = "http://127.0.0.1:8000/";
+            const url = "http://localhost:8000/";
             return `${url}uploads/${this.product.image}`;
         },
     },
@@ -46,7 +46,6 @@ export default {
 }
 
 .product-item {
-    width: 300px;
     text-align: center;
     margin: 0 auto;
     margin-bottom: 20px;

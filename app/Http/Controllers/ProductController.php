@@ -3,15 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Category;
-use App\Http\Resources\AttributeResource;
+use App\CategoryAttributes;
+use App\Http\Requests\ProductRequest;
 use App\Product;
 use App\ProductAttributesValue;
-use App\User;
-use Illuminate\Database\Eloquent\Collection;
+use DB;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
 
 class ProductController extends Controller
@@ -19,7 +18,7 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     function __construct()
     {
@@ -31,11 +30,11 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function index()
     {
-        $products = Product::latest()->paginate(5);
+        $products = Product::with('category')->latest()->paginate(5);
         return view('products.index', compact('products'));
     }
 
@@ -43,15 +42,12 @@ class ProductController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function create()
     {
-        $users = Auth::user();
-        $categories = Auth::user()->categories;
-        if ($users->hasRole('Super Admin')) {
-            $categories = Category::all();
-        }
+        $user = Auth::user();
+        $categories = Category::getCategoriesByUser($user)->toJson();
 
         return view('products.create', compact('categories'));
     }
@@ -60,16 +56,11 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return Response
      */
-    public function store(Request $request)
+    public function store(ProductRequest $request)
     {
-        request()->validate([
-            'name' => 'required',
-            'category' => 'required',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]);
         $product = new Product();
         $product->name = $request->name;
         $product->category_id = $request->category;
@@ -83,12 +74,11 @@ class ProductController extends Controller
         $product->save();
 
         foreach ($request->get('attributes') as $value) {
-            ProductAttributesValue::updateOrCreate(['value' => $value],[
+            ProductAttributesValue::updateOrCreate(['product_id' => $product->id, 'category_attribute_id' => $value['id']], [
                 'product_id' => $product->id,
-                'category_attribute_id' =>$value['id'],
-                'value' =>$value['value'],
+                'category_attribute_id' => $value['id'],
+                'value' => $value['value'],
             ]);
-
 
         }
 
@@ -100,20 +90,15 @@ class ProductController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param \App\Product $product
-     * @return \Illuminate\Http\Response
+     * @param Product $product
+     * @return Response
      */
     public function edit(Product $product)
     {
-        $users = Auth::user();
-        $categories = Auth::user()->categories->pluck('name', 'id');
-
-        if ($users->hasRole('Super Admin')) {
-            $categories = Category::all();
-        }
-
-        $attributes = AttributeResource::collection($product->attributes);
-
+        $user = Auth::user();
+        $categories = Category::getCategoriesByUser($user)->toJson();
+        $attributes = CategoryAttributes::getAttributesByProduct($product);
+//        dd($attributes);
         return view('products.edit', compact('product', 'categories', 'attributes'));
     }
 
@@ -121,9 +106,9 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Product $product
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param Product $product
+     * @return Response
      */
     public function update(Request $request, Product $product)
     {
@@ -143,15 +128,12 @@ class ProductController extends Controller
             $product->image = $filename;
         };
 
-        dd($request->get('attributes'));
-
-        foreach ($request->get('attributes') as $name => $value) {
-            ProductAttributesValue::updateOrCreate(['value' => $value],[
+        foreach ($request->get('attributes') as $value) {
+            ProductAttributesValue::updateOrCreate(['product_id' => $product->id, 'category_attribute_id' => $value['id']], [
                 'product_id' => $product->id,
-                'category_attribute_id' =>$value,
-                'value' =>$value,
-                ]);
-
+                'category_attribute_id' => $value['id'],
+                'value' => $value['value'],
+            ]);
         }
 
         $product->save();
@@ -165,8 +147,8 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\Product $product
-     * @return \Illuminate\Http\Response
+     * @param Product $product
+     * @return Response
      */
     public function destroy(Product $product)
     {
@@ -177,9 +159,10 @@ class ProductController extends Controller
             ->with('success', 'Product deleted successfully');
     }
 
-    public function attributes($id) {
+    public function attributes($id)
+    {
         $product = Product::find($id);
-        $attributes = \DB::table('product_attributes_values')
+        $attributes = DB::table('product_attributes_values')
             ->join('category_attributes', 'product_attributes_values.category_attribute_id', '=', 'category_attributes.id')
             ->join('products', 'product_attributes_values.product_id', '=', 'products.id')
             ->where('product_attributes_values.product_id', $product->id)
