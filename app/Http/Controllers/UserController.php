@@ -4,6 +4,7 @@
 namespace App\Http\Controllers;
 
 
+use App\Http\Requests\UserRequest;
 use Illuminate\Http\Request;
 use App\User;
 use Illuminate\Http\Response;
@@ -35,7 +36,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        $roles = Role::pluck('name', 'name')->all();
+        $roles = Role::pluck('name')->all();
         return view('users.create', compact('roles'));
     }
 
@@ -47,14 +48,8 @@ class UserController extends Controller
      * @return Response
      * @throws ValidationException
      */
-    public function store(Request $request)
+    public function store(UserRequest $request)
     {
-        $this->validate($request, [
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|same:confirm-password',
-            'roles' => 'required'
-        ]);
 
         $input = $request->all();
         $input['password'] = Hash::make($input['password']);
@@ -91,9 +86,8 @@ class UserController extends Controller
     public function edit($id)
     {
         $user = User::find($id);
-        $roles = Role::pluck('name', 'name')->all();
-        $userRole = $user->roles->pluck('name', 'name')->all();
-
+        $roles = Role::pluck('name')->all();
+        $userRole = $user->roles->first()->name;
 
         return view('users.edit', compact('user', 'roles', 'userRole'));
     }

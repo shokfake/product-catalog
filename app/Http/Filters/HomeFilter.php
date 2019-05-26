@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class HomeFilter
 {
-    public function filter(Request $request){
+    public static function filter(Request $request){
         $products = Product::query()->orderBy('id', 'desc');
 
         if ($request->has('category')) {

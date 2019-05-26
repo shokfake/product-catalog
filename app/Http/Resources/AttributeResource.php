@@ -14,7 +14,7 @@ use Illuminate\Http\Resources\Json\Resource;
  * @property mixed value
  * @property mixed attribute
  */
-class AttributeResource extends JsonResource
+class AttributeResource extends Resource
 {
 
     /**

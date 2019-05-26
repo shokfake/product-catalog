@@ -20,7 +20,6 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string|null $remember_token
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Category[] $categories
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
  * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\Permission\Models\Permission[] $permissions
  * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\Permission\Models\Role[] $roles
@@ -44,7 +43,9 @@ class User extends Authenticatable
     use Notifiable;
     use HasRoles;
 
-
+    const SUPER_USER = "Super Admin";
+    const ADMIN_MANAGERS = "Admin managers";
+    const USER = "User";
     /**
      * The attributes that are mass assignable.
      *

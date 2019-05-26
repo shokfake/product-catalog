@@ -13,7 +13,7 @@ class HomeController extends Controller
 
     public function index(Request $request)
     {
-        $products = (new HomeFilter())->filter($request);
+        $products = HomeFilter::filter($request);
 
         $categories = Category::all();
         return view('home', ['products' => $products, 'categories' => $categories]);
