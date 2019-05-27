@@ -1,14 +1,17 @@
 @extends('layouts.app')
 
 @section('content')
-    <style>
-        .uper {
-            margin-top: 40px;
-        }
-    </style>
-    <div class="card uper">
+    <div class="card">
         <div class="card-header">
-            Edit Category
+            <div class="row">
+                <div class="col-md-11 d-flex align-items-center justify-content-center">
+                    <strong>Edit category</strong>
+                </div>
+                <div class="col-md-1">
+                    <a class="btn btn-outline-info btn-sm" href="{{ route('categories.index') }}"> Back</a>
+
+                </div>
+            </div>
         </div>
         <div class="card-body">
             @if ($errors->any())
@@ -21,24 +24,31 @@
                 </div><br/>
             @endif
             <form method="post" action="{{ route('categories.update', $category->id) }}">
-                <div class="form-group">
-                    @method('PATCH')
-                    @csrf
-                    <div class="form-group">
-                        <label for="name">Category Name:</label>
-                        <input type="text" class="form-control" name="name" value={{ $category->name }} />
-                    </div>
-                    <div class="form-group">
-                        {!! Form::Label('user', 'Users:') !!}
-                        {!! Form::select('user', $users, $category->user_id ?? ' ', ['class' => 'form-control']) !!}
-                    </div>
-                    <div class="form-group">
-                        <category-attribute v-bind:isSaveButton="true"
-                                            v-bind:attributes="{{$attributes}}"></category-attribute>
-                    </div>
-                </div>
-
-                <button type="submit" class="btn btn-primary">Update</button>
+               <div class="row">
+                   <div class="form-group">
+                       @method('PATCH')
+                       @csrf
+                       <div class="form-group">
+                           <label for="name">Category Name:</label>
+                           <input type="text" class="form-control" name="name" value={{ $category->name }} />
+                       </div>
+                       <div class="form-group">
+                           <label for="user">Users</label>
+                           <select id="user" class="custom-select" name="user" placeholder="Please Select">
+                               @foreach($users as $id => $name)
+                                   <option value="{{$id}}" {{ ( $category->user->id === $id) ? 'selected':''}}>{{$name}}</option>
+                               @endforeach
+                           </select>
+                       </div>
+                       <div class="form-group">
+                           <category-attribute v-bind:isSaveButton="true"
+                                               v-bind:attributes="{{$attributes}}"></category-attribute>
+                       </div>
+                   </div>
+                   <div class="col-xs-12 col-sm-12 col-md-12 text-center">
+                       <button type="submit" class="btn btn-outline-primary">Submit</button>
+                   </div>
+               </div>
             </form>
         </div>
     </div>

@@ -61,17 +61,18 @@ class ProductController extends Controller
      */
     public function store(ProductRequest $request)
     {
-        $product = new Product();
-        $product->name = $request->name;
-        $product->category_id = $request->category;
-
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $filename = time() . '.' . $image->getClientOriginalExtension();
             Image::make($image)->resize(200, 200)->save(public_path('uploads/') . $filename);
-            $product->image = $filename;
+            $image = $filename;
         };
-        $product->save();
+
+        $product = Product::create([
+            'name' => $request->get('name'),
+            'category_id' => $request->get('category'),
+            'image' => $image,
+        ]);
 
         foreach ($request->get('attributes') as $value) {
             ProductAttributesValue::updateOrCreate(['product_id' => $product->id, 'category_attribute_id' => $value['id']], [
@@ -81,7 +82,6 @@ class ProductController extends Controller
             ]);
 
         }
-
 
         return redirect()->route('products.index')
             ->with('success', 'Product created successfully.');

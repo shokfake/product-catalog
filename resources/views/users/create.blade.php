@@ -39,7 +39,8 @@
                     <div class="col-xs-12 col-sm-12 col-md-12">
                         <div class="form-group">
                             <strong>Password:</strong>
-                            <input class="form-control" type="Password" name="password" placeholder="Password">
+                            <input class="form-control" type="Password" name="confirm-password"
+                                   placeholder="Confirm password">
                         </div>
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-12">
@@ -51,15 +52,16 @@
                     <div class="col-xs-12 col-sm-12 col-md-12">
                         <div class="form-group">
                             <strong>Role:</strong>
-                            <select class="form-control" name="roles" placeholder="Please Select">
+                            <select class="custom-select" name="roles">
+                                <option value="0" hidden>Please Select</option>
                                 @foreach($roles as $role)
                                     <option value="{{$role}}">{{$role}}</option>
                                 @endforeach
                             </select>
-                           </div>
+                        </div>
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-12 text-center">
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="submit" class="btn btn-outline-primary">Submit</button>
                     </div>
                 </div>
             </form>

@@ -2,10 +2,12 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
@@ -36,6 +38,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User wherePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereRememberToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereUpdatedAt($value)
+ * @method static getUsersWithRoleAdminManagers()
  * @mixin \Eloquent
  */
 class User extends Authenticatable
@@ -77,5 +80,13 @@ class User extends Authenticatable
     public function categories()
     {
         return $this->hasMany(Category::class);
+    }
+
+    public function scopeGetUsersWithRoleAdminManagers(Builder $builder)
+    {
+        $users = Role::findByName(User::ADMIN_MANAGERS)->users->pluck('name', 'id');
+        $users->prepend('Please Select', 0);
+        return $users;
+
     }
 }

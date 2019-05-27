@@ -1,6 +1,6 @@
 <template>
-<div class="product-item col-md-1">
-    <img v-bind:src="image" class="rounded mx-auto d-block">
+<div class="product-item">
+    <img v-bind:src="image" class="rounded">
     <div class="product-list">
         <h3>{{product.name}}</h3>
         <div class="product-items">
@@ -83,6 +83,5 @@ export default {
 
 .product-name {
     border-bottom: 2px solid #301ed8;
-    ;
 }
 </style>

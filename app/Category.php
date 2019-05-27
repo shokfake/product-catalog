@@ -56,6 +56,7 @@ class Category extends Model
      */
     public function scopeGetCategoriesByUser(Builder $builder,User $user)
     {
+
         return $user->hasRole('Super Admin') ? self::all() : $builder->whereUserId($user->id)->get();
     }
 }

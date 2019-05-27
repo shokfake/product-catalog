@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Category;
 use App\CategoryAttributes;
+use App\Http\Requests\CategoryRequest;
 use App\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
@@ -19,7 +20,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::all();
+        $categories = Category::latest()->paginate(5);
         return view('categories.index', compact('categories'));
     }
 
@@ -30,7 +31,8 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        $users = Role::findByName('Admin managers')->users->pluck('name', 'id');
+        $users =  User::getUsersWithRoleAdminManagers();
+
         return view('categories.create', compact('users'));
     }
 
@@ -40,14 +42,8 @@ class CategoryController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function store(Request $request)
+    public function store(CategoryRequest $request)
     {
-
-        $request->validate([
-            'name' => 'required',
-//            'user_id'=>'required',
-        ]);
-
         $category = new Category([
             'name' => $request->get('name'),
             'user_id' => $request->get('user'),
@@ -55,72 +51,49 @@ class CategoryController extends Controller
         $category->save();
 
         foreach ($request->get('attributes') as $attribute) {
-            $categoryAttribute = new CategoryAttributes();
-            $categoryAttribute->name = $attribute;
-            $categoryAttribute->category_id = $category->id;
-            $categoryAttribute->save();
+            CategoryAttributes::create([
+                'name' => $attribute,
+                'category_id' => $category->id
+            ]);
         }
-
         return redirect()->route('categories.index')->with('success', 'Category has been added');
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param int $id
-     * @return Response
-     */
-    public function show($id)
-    {
-        //
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param int $id
+     * @param Category $category
      * @return Response
      */
-    public function edit($id)
+    public function edit(Category $category)
     {
-
         /** @var Collection $users */
-        $users = Role::findByName('Admin managers')->users->pluck('name', 'id');
-        /** @var Category $category */
-        $category = Category::find($id);
+        $users = User::getUsersWithRoleAdminManagers();
 
-//        dd(\GuzzleHttp\json_encode($category->attributes));
-        if (!$users->has($category->user_id)) {
-            $users->prepend('Please Select', 0);
-        }
-
-        $attributes = \GuzzleHttp\json_encode($category->attributes);
+        $attributes = $category->attributes->toJson();
         return view('categories.edit', compact('category', 'users', 'attributes'));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
-     * @param int $id
+     * @param CategoryRequest $request
+     * @param Category $category
      * @return Response
      */
-    public function update(Request $request, $id)
+    public function update(CategoryRequest $request, Category $category)
     {
-        $request->validate([
-            'name' => 'required',
-        ]);
-
-        $category = Category::find($id);
-        $category->name = $request->get('name');
-        $category->user_id = $request->get('user');
-        foreach ($request->get('attributes') as $id => $name) {
-            $categoryAttribute = new CategoryAttributes();
-            $categoryAttribute->name = $name;
-            $categoryAttribute->category_id = $category->id;
-            $categoryAttribute->save();
+        foreach ($request->get('attributes') as $attribute) {
+            CategoryAttributes::create([
+                'name' => $attribute,
+                'category_id' => $category->id
+            ]);
         }
-        $category->update();
+
+        $category->update([
+            'name' => $request->get('name'),
+            'user_id' => $request->get('user')
+        ]);
 
         return redirect()->route('categories.index')->with('success', 'Category has been updated');
     }

@@ -3,36 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\CategoryAttributes;
+use App\Http\Requests\AttributeRequest;
 use Illuminate\Http\Request;
 
 class AttributeController extends Controller
 {
-    public function show(Request $request, int $id)
+    public function update(AttributeRequest $request, int $id)
     {
-        $request->validate([
-            'name' => 'required',
-        ]);
-        $attribute = CategoryAttributes::find($id);
-        $attribute->name = $request->get('name');
-        $attribute->update();
-        return response()->json($attribute, 200);
-    }
-    public function update(Request $request, int $id)
-    {
-        $request->validate([
-            'name' => 'required',
-        ]);
-        $attribute = CategoryAttributes::find($id);
-        $attribute->name = $request->get('name');
-        $attribute->update();
+        $attribute = CategoryAttributes::updateOrCreate(['id' => $id],
+            [
+                'name' => $request->get('name')
+            ]);
         return response()->json($attribute, 200);
     }
 
     public function delete(int $id)
     {
-        $attribute = CategoryAttributes::find($id);
-        $attribute->delete();
-
+        CategoryAttributes::find($id)->delete();
         return response()->json(null, 204);
     }
 }
