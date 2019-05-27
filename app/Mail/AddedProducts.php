@@ -14,10 +14,11 @@ class AddedProducts extends Mailable
     use Queueable, SerializesModels;
 
     private $products;
+
     /**
      * Create a new message instance.
      *
-     * @return void
+     * @param Collection $products
      */
     public function __construct(Collection $products)
     {

@@ -7,7 +7,7 @@
                 <h2>Products</h2>
             </div>
             <div class="col-md-3 d-flex align-items-end justify-content-end">
-                @can('create-product')
+                @can('product-create')
                     <a class="btn btn-outline-success" href="{{ route('products.create') }}"> Create New Product</a>
                 @endcan
             </div>

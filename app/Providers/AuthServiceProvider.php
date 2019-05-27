@@ -18,7 +18,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         // 'App\Model' => 'App\Policies\ModelPolicy',
-//        Product::class => ProductPolicy::class,
+        Product::class => ProductPolicy::class,
     ];
 
     /**
@@ -31,19 +31,19 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        $gate->define('create-product', function (User $user) {
-        return ! $user->hasRole('User');
-        });
-
-        $gate->define('update-product', function (User $user, Product $product) {
-            $categories = $user->categories->pluck('name','id');
-
-            return ($user->hasRole('Admin managers') && $categories->has($product->category->id)) || $user->hasRole('Super Admin');
-        });
-
-        $gate->define('delete-product', function (User $user) {
-           return $user->hasRole('Super Admin');
-        });
+//        $gate->define('create-product', function (User $user) {
+//        return ! $user->hasRole('User');
+//        });
+//
+//        $gate->define('update-product', function (User $user, Product $product) {
+//            $categories = $user->categories->pluck('name','id');
+//
+//            return ($user->hasRole('Admin managers') && $categories->has($product->category->id)) || $user->hasRole('Super Admin');
+//        });
+//
+//        $gate->define('delete-product', function (User $user) {
+//           return $user->hasRole('Super Admin');
+//        });
 
     }
 }

@@ -35,7 +35,8 @@
                     </div>
                     <div class="form-group">
                         <label for="user">Users</label>
-                        <select id="user" class="custom-select" name="user" placeholder="Please Select">
+                        <select id="user" class="custom-select" name="user_id" placeholder="Please Select">
+                            <option value="" hidden>Please Select</option>
                             @foreach($users as $id => $name)
                                 <option value="{{$id}}">{{$name}}</option>
                             @endforeach

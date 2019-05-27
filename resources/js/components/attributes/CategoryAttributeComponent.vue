@@ -5,13 +5,13 @@
         <div class="row " v-for="(input, index) in inputs">
             <div class="form-group form-inline">
                 <div class="col-sm">
-                    <input type="text" @focus="setVisibleSaveButton(input)"
-                           class="form-control" v-bind:name="getInputName(index)" v-model="input.name"
+                    <input type="hidden" v-bind:name="getInputName(index,'id')" v-model="input.id" class="form-control"/>
+                    <input type="text"
+                           class="form-control" v-bind:name="getInputName(index,'name')" v-model="input.name"
                            placeholder="Attribute">
                 </div>
                 <div class="col-sm">
-                    <button v-if="input.isSave" class="btn btn-info" type="button" @click="save(index)">Save</button>
-                    <button v-else class="btn btn-danger" type="button" @click="remove(index)">Delete</button>
+                      <button  class="btn btn-danger" type="button" @click="remove(index)">Delete</button>
                 </div>
             </div>
         </div>
@@ -26,11 +26,6 @@
     export default {
         name: 'CategoryAttributeComponent',
         props: {
-            isSaveButton: {
-                type: Boolean,
-                default: false,
-                require: false
-            },
             attributes: {
                 type: Array,
                 default: () => []
@@ -43,23 +38,18 @@
             }
         },
         methods: {
-            setVisibleSaveButton(input) {
-                if (input.id) {
-                    input.isSave = true;
-                }
-            },
-            setVisibleDeleteButton(input) {
-                input.isSave = false;
-            },
             add() {
                 this.inputs.push({
+                    id: 0,
                     name: '',
-                    isSave: this.isSaveButton
                 });
             },
             remove(index) {
-
-                let url = `http://127.0.0.1:8000/api/attributes/${this.inputs[index].id}`;
+                if (this.inputs[index].id === 0) {
+                    this.inputs.splice(index, 1);
+                    return;
+                }
+                let url = `http://localhost:8000/api/attributes/${this.inputs[index].id}`;
 
                 axios
                     .delete(url)
@@ -71,29 +61,9 @@
 
                 this.inputs.splice(index, 1);
             },
-            save(index) {
-                this.inputs[index].isSave = false;
-
-                if (!this.inputs[index].id) {
-                    console.log("Error");
-                }
-                let url = `http://127.0.0.1:8000/api/attributes/${this.inputs[index].id}`;
-
-                axios
-                    .post(url, this.inputs[index])
-                    .then(function (response) {
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
+            getInputName(index, name) {
+                return `attributes[${index}][${name}]`;
             },
-            getInputName(index) {
-                if (this.inputs[index].id) {
-                    return  ""
-                }
-
-                return "attributes[" + index + "]";
-            }
         },
     }
 </script>

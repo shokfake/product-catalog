@@ -34,15 +34,15 @@
                        </div>
                        <div class="form-group">
                            <label for="user">Users</label>
-                           <select id="user" class="custom-select" name="user" placeholder="Please Select">
+                           <select id="user" class="custom-select" name="user_id" placeholder="Please Select">
+                               <option value="" hidden>Please Select</option>
                                @foreach($users as $id => $name)
                                    <option value="{{$id}}" {{ ( $category->user->id === $id) ? 'selected':''}}>{{$name}}</option>
                                @endforeach
                            </select>
                        </div>
                        <div class="form-group">
-                           <category-attribute v-bind:isSaveButton="true"
-                                               v-bind:attributes="{{$attributes}}"></category-attribute>
+                           <category-attribute v-bind:attributes="{{$category->attributes->toJson()}}"></category-attribute>
                        </div>
                    </div>
                    <div class="col-xs-12 col-sm-12 col-md-12 text-center">

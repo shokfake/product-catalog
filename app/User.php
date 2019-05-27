@@ -39,6 +39,9 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereRememberToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereUpdatedAt($value)
  * @method static getUsersWithRoleAdminManagers()
+ * @method static getUsersByRole(string $role)
+ * @method static getEmailsByRole(string $SUPER_USER)
+ * @method static getUsersEmailsByRole(string $SUPER_USER)
  * @mixin \Eloquent
  */
 class User extends Authenticatable
@@ -82,11 +85,15 @@ class User extends Authenticatable
         return $this->hasMany(Category::class);
     }
 
-    public function scopeGetUsersWithRoleAdminManagers(Builder $builder)
+    public function scopeGetUsersByRole(Builder $builder, string $role)
     {
-        $users = Role::findByName(User::ADMIN_MANAGERS)->users->pluck('name', 'id');
-        $users->prepend('Please Select', 0);
+        $users = self::role($role)->get();
         return $users;
+    }
 
+    public function scopeGetUsersEmailsByRole(Builder $builder, string $role)
+    {
+        $users = self::getUsersByRole($role)->pluck('email');
+        return $users;
     }
 }

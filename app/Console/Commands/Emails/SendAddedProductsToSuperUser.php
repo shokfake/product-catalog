@@ -1,15 +1,14 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\Emails;
 
 use App\Mail\AddedProducts;
 use App\Product;
+use App\User;
 use Illuminate\Console\Command;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Mail;
-use Spatie\Permission\Models\Role;
 
-class SendEmails extends Command
+class SendAddedProductsToSuperUser extends Command
 {
     /**
      * The name and signature of the console command.
@@ -23,7 +22,7 @@ class SendEmails extends Command
      *
      * @var string
      */
-    protected $description = 'Send drip e-mails to a user';
+    protected $description = 'Send added products to super user';
 
     /**
      * Create a new command instance.
@@ -42,10 +41,10 @@ class SendEmails extends Command
      */
     public function handle()
     {
-        $superUsers = Role::findByName('Super Admin');
-        $products = Product::all()->where('created_at', '>=', Carbon::today()->toDateString());
-        foreach ($superUsers->users as $users) {
-            Mail::to($users->email)->send(new AddedProducts($products));
+        $emails = User::getUsersEmailsByRole(User::SUPER_USER);
+        $products = Product::getProductsAddedToday();
+        foreach ($emails as $email) {
+            Mail::to($email)->send(new AddedProducts($products));
         }
     }
 }

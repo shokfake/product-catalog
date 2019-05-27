@@ -31,7 +31,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        $users =  User::getUsersWithRoleAdminManagers();
+        $users = User::getUsersByRole(User::ADMIN_MANAGERS)->pluck('name', 'id');
 
         return view('categories.create', compact('users'));
     }
@@ -44,18 +44,8 @@ class CategoryController extends Controller
      */
     public function store(CategoryRequest $request)
     {
-        $category = new Category([
-            'name' => $request->get('name'),
-            'user_id' => $request->get('user'),
-        ]);
-        $category->save();
-
-        foreach ($request->get('attributes') as $attribute) {
-            CategoryAttributes::create([
-                'name' => $attribute,
-                'category_id' => $category->id
-            ]);
-        }
+        $category = Category::create($request->all());
+        $category->setCategoryAttributes($request);
         return redirect()->route('categories.index')->with('success', 'Category has been added');
     }
 
@@ -68,10 +58,9 @@ class CategoryController extends Controller
     public function edit(Category $category)
     {
         /** @var Collection $users */
-        $users = User::getUsersWithRoleAdminManagers();
+        $users = User::getUsersByRole(User::ADMIN_MANAGERS)->pluck('name', 'id');
 
-        $attributes = $category->attributes->toJson();
-        return view('categories.edit', compact('category', 'users', 'attributes'));
+        return view('categories.edit', compact('category', 'users'));
     }
 
     /**
@@ -83,17 +72,8 @@ class CategoryController extends Controller
      */
     public function update(CategoryRequest $request, Category $category)
     {
-        foreach ($request->get('attributes') as $attribute) {
-            CategoryAttributes::create([
-                'name' => $attribute,
-                'category_id' => $category->id
-            ]);
-        }
-
-        $category->update([
-            'name' => $request->get('name'),
-            'user_id' => $request->get('user')
-        ]);
+        $category->setCategoryAttributes($request);
+        $category->update($request->all());
 
         return redirect()->route('categories.index')->with('success', 'Category has been updated');
     }
