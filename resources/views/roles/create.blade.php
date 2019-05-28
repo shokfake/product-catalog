@@ -4,7 +4,15 @@
 @section('content')
     <div class="card uper">
         <div class="card-header">
-            New Role
+            <div class="row">
+                <div class="col-md-11 d-flex align-items-center justify-content-center">
+                    <strong>Create Role</strong>
+                </div>
+                <div class="col-md-1">
+                    <a class="btn btn-outline-info btn-sm" href="{{ route('roles.index') }}"> Back</a>
+
+                </div>
+            </div>
         </div>
         <div class="card-body">
 
@@ -25,22 +33,24 @@
                 <div class="row">
                     <div class="col-xs-12 col-sm-12 col-md-12">
                         <div class="form-group">
-                            <strong>Name:</strong>
-                            {!! Form::text('name', null, array('placeholder' => 'Name','class' => 'form-control')) !!}
+                            @csrf
+                            <label for="name">Name:</label>
+                            <input id="name" type="text" class="form-control" placeholder="Name" name="name"/>
                         </div>
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-12">
                         <div class="form-group">
                             <label class="">Permission:</label><br>
                             @foreach($permission as $value)
-                                <label>{{ Form::checkbox('permission[]', $value->id, false, array('class' => 'name')) }}
-                                    {{ $value->name }}</label>
-                                <br/>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="{{$value->$value}}" name="permission[]">
+                                    <label class="custom-control-label" for="{{$value->$value}}">{{$value->name}}</label>
+                                </div>
                             @endforeach
                         </div>
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-12 text-center">
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="submit" class="btn btn-outline-primary">Submit</button>
                     </div>
                 </div>
             </form>

@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CategoryAttributes whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CategoryAttributes whereUpdatedAt($value)
  * @method static Builder|Category getAttributesByProduct(Product $product)
+ * @method static getAttributesProduct(Product $product)
  * @mixin \Eloquent
  */
 class CategoryAttributes extends Model
@@ -45,14 +46,16 @@ class CategoryAttributes extends Model
     {
         return $this->hasMany(ProductAttributesValue::class, 'category_attribute_id');
     }
-
-
+    /**
+     * @param Builder $builder
+     * @param Product $product
+     * @return Builder
+     */
     public function scopeGetAttributesByProduct(Builder $builder, Product $product)
     {
-        return $builder->leftJoin('product_attributes_values', function ($join) use ($product) {
-            $join->on('category_attributes.id', '=', 'product_attributes_values.category_attribute_id')
-                ->where('product_attributes_values.product_id', '=', $product->id);
-        })->select(['category_attributes.id','category_attributes.name','product_attributes_values.value'])
+        return $builder
+            ->join('product_attributes_values', 'category_attributes.id', '=', 'product_attributes_values.category_attribute_id')
+            ->select(['category_attributes.id', 'category_attributes.name', 'product_attributes_values.value'])->where('product_attributes_values.product_id', '=', $product->id)
             ->whereCategoryId($product->category_id)->get();
     }
 }

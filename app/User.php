@@ -2,10 +2,12 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
@@ -36,6 +38,10 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User wherePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereRememberToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereUpdatedAt($value)
+ * @method static getUsersWithRoleAdminManagers()
+ * @method static getUsersByRole(string $role)
+ * @method static getEmailsByRole(string $SUPER_USER)
+ * @method static getUsersEmailsByRole(string $SUPER_USER)
  * @mixin \Eloquent
  */
 class User extends Authenticatable
@@ -77,5 +83,17 @@ class User extends Authenticatable
     public function categories()
     {
         return $this->hasMany(Category::class);
+    }
+
+    public function scopeGetUsersByRole(Builder $builder, string $role)
+    {
+        $users = self::role($role)->get();
+        return $users;
+    }
+
+    public function scopeGetUsersEmailsByRole(Builder $builder, string $role)
+    {
+        $users = self::getUsersByRole($role)->pluck('email');
+        return $users;
     }
 }

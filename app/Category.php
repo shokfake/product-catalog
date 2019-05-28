@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Http\Requests\CategoryRequest;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -54,8 +55,30 @@ class Category extends Model
      * @param User $user
      * @return Category|Category[]|Builder|Collection
      */
-    public function scopeGetCategoriesByUser(Builder $builder,User $user)
+    public function scopeGetCategoriesByUser(Builder $builder, User $user)
     {
+
         return $user->hasRole('Super Admin') ? self::all() : $builder->whereUserId($user->id)->get();
     }
+
+    public function setCategoryAttributes(CategoryRequest $request)
+    {
+        if (!$request->has('attributes')) {
+            return;
+        }
+
+        foreach ($request->get('attributes') as $attribute) {
+            CategoryAttributes::updateOrCreate(
+                [
+                    'id' => $attribute['id'],
+                    'category_id' => $this->id,
+                ],
+                [
+
+                    'category_id' => $this->id,
+                    'name' =>  $attribute['name'],
+                ]);
+           }
+    }
+
 }

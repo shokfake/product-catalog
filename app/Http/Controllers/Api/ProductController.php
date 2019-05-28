@@ -10,12 +10,12 @@ class ProductController extends Controller
 {
     public function index()
     {
-        return Product::all();
+        return Product::with('category')->all();
     }
 
     public function show(Product $product)
     {
-        return $product;
+        return $product->with('category');
     }
 
     public function store(Request $request)

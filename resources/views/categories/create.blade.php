@@ -1,24 +1,30 @@
 @extends('layouts.app')
 
 @section('content')
-    <style>
-        .uper {
-            margin-top: 40px;
-        }
-    </style>
-    <div class="card uper">
+
+    <div class="card">
         <div class="card-header">
-            Add Category
+            <div class="row">
+                <div class="col-md-11 d-flex align-items-center justify-content-center">
+                    <strong>Add Category</strong>
+                </div>
+                <div class="col-md-1">
+                    <a class="btn btn-outline-info btn-sm" href="{{ route('categories.index') }}"> Back</a>
+
+                </div>
+            </div>
         </div>
         <div class="card-body">
             @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div><br/>
+                <div>
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
             @endif
             <form method="post" action="{{ route('categories.store') }}">
                 <div class="form-group">
@@ -28,14 +34,21 @@
                         <input id="name" type="text" class="form-control" name="name"/>
                     </div>
                     <div class="form-group">
-                        {!! Form::Label('user', 'Users:') !!}
-                        {!! Form::select('user', $users, null, ['class' => 'form-control','placeholder' => 'Please Select']) !!}
+                        <label for="user">Users</label>
+                        <select id="user" class="custom-select" name="user_id" placeholder="Please Select">
+                            <option value="" hidden>Please Select</option>
+                            @foreach($users as $id => $name)
+                                <option value="{{$id}}">{{$name}}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="form-group">
                         <category-attribute/>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-primary">Add</button>
+                <div class="col-xs-12 col-sm-12 col-md-12 text-center">
+                    <button type="submit" class="btn btn-outline-primary">Submit</button>
+                </div>
             </form>
         </div>
     </div>

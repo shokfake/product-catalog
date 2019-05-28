@@ -2,17 +2,14 @@
 
 
 @section('content')
-
     <div class="row">
-        <div class="col-lg-12 margin-tb">
-            <div class="pull-left">
-                <h2>Role Management</h2>
-            </div>
-            <div class="pull-right">
-                @can('role-create')
-                    <a class="btn btn-success" href="{{ route('roles.create') }}"> Create New Role</a>
-                @endcan
-            </div>
+        <div class="col-md-9 d-flex align-items-center justify-content-center ">
+            <h2>Roles</h2>
+        </div>
+        <div class="col-md-3 d-flex align-items-end justify-content-end">
+            @can('role-create')
+                <a class="btn btn-outline-success" href="{{ route('roles.create') }}"> Create New Role</a>
+            @endcan
         </div>
     </div>
 
@@ -24,35 +21,44 @@
         </div>
     @endif
 
-
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            <th>No</th>
-            <th>Name</th>
-            <th width="280px">Action</th>
-        </tr>
-        </thead>
-        @foreach ($roles as $key => $role)
-            <tr>
-                <td>{{ ++$i }}</td>
-                <td>{{ $role->name }}</td>
-                <td>
-                    @can('role-edit')
-                        <a class="btn btn-primary" href="{{ route('roles.edit',$role->id) }}">Edit</a>
-                    @endcan
-                    @can('role-delete')
-                        {!! Form::open(['method' => 'DELETE','route' => ['roles.destroy', $role->id],'style'=>'display:inline']) !!}
-                        {!! Form::submit('Delete', ['class' => 'btn btn-danger']) !!}
-                        {!! Form::close() !!}
-                    @endcan
-                </td>
-            </tr>
-        @endforeach
-    </table>
-
-
-    {!! $roles->render() !!}
+    <div class="row mt-3">
+        <div class="col-lg-12">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th colspan="2">Action</th>
+                </tr>
+                </thead>
+                @foreach ($roles as $key => $role)
+                    <tr>
+                        <td>{{ $role->id }}</td>
+                        <td>{{ $role->name }}</td>
+                        <td>
+                            @can('role-edit')
+                                <a class="btn btn-outline-success" href="{{ route('roles.edit',$role->id) }}">Edit</a>
+                            @endcan
+                            @can('role-delete')
+                                    <form action="{{ route('roles.destroy', $role->id)}}" method="post"
+                                          style="display:inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-outline-danger" type="submit"
+                                                @cannot('delete-roles') disabled @endcannot>Delete
+                                        </button>
+                                    </form>
 
 
+                            @endcan
+                        </td>
+                    </tr>
+                @endforeach
+            </table>
+        </div>
+    </div>
+
+    <div class="page-hero d-flex align-items-center justify-content-center">
+        {!! $roles->links() !!}
+    </div>
 @endsection

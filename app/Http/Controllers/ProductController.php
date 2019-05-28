@@ -5,20 +5,17 @@ namespace App\Http\Controllers;
 use App\Category;
 use App\CategoryAttributes;
 use App\Http\Requests\ProductRequest;
+use App\Policies\ProductPolicy;
 use App\Product;
-use App\ProductAttributesValue;
-use DB;
-use Illuminate\Http\Request;
+use App\User;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Intervention\Image\Facades\Image;
 
 class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return Response
      */
     function __construct()
     {
@@ -56,32 +53,20 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
+     * @param ProductRequest $request
      * @return Response
      */
     public function store(ProductRequest $request)
     {
-        $product = new Product();
-        $product->name = $request->name;
-        $product->category_id = $request->category;
+        $this->authorize('create', $request->get('category'));
 
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $filename = time() . '.' . $image->getClientOriginalExtension();
-            Image::make($image)->resize(200, 200)->save(public_path('uploads/') . $filename);
-            $product->image = $filename;
-        };
-        $product->save();
+        $product = Product::create([
+            'name' => $request->get('name'),
+            'category_id' => $request->get('category'),
+            'image' => Product::getNameUploadImage($request),
+        ]);
 
-        foreach ($request->get('attributes') as $value) {
-            ProductAttributesValue::updateOrCreate(['product_id' => $product->id, 'category_attribute_id' => $value['id']], [
-                'product_id' => $product->id,
-                'category_attribute_id' => $value['id'],
-                'value' => $value['value'],
-            ]);
-
-        }
-
+        $product->setProductAttributes($request);
 
         return redirect()->route('products.index')
             ->with('success', 'Product created successfully.');
@@ -96,9 +81,9 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         $user = Auth::user();
+        $this->authorize(ProductPolicy::MANAGERS, $product->category->id);
         $categories = Category::getCategoriesByUser($user)->toJson();
         $attributes = CategoryAttributes::getAttributesByProduct($product);
-//        dd($attributes);
         return view('products.edit', compact('product', 'categories', 'attributes'));
     }
 
@@ -106,38 +91,21 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
+     * @param ProductRequest $request
      * @param Product $product
      * @return Response
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function update(Request $request, Product $product)
+    public function update(ProductRequest $request, Product $product)
     {
-
-        request()->validate([
-            'name' => 'required',
-            'category' => 'required',
+        $this->authorize(ProductPolicy::MANAGERS, $product->category->id);
+        $product = Product::create([
+            'name' => $request->get('name'),
+            'category_id' => $request->get('category'),
+            'image' => Product::getNameUploadImage($request),
         ]);
 
-        $product->name = $request->name;
-        $product->category_id = $request->category;
-
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $filename = time() . '.' . $image->getClientOriginalExtension();
-            Image::make($image)->resize(200, 200)->save(public_path('uploads/') . $filename);
-            $product->image = $filename;
-        };
-
-        foreach ($request->get('attributes') as $value) {
-            ProductAttributesValue::updateOrCreate(['product_id' => $product->id, 'category_attribute_id' => $value['id']], [
-                'product_id' => $product->id,
-                'category_attribute_id' => $value['id'],
-                'value' => $value['value'],
-            ]);
-        }
-
-        $product->save();
-
+        $product->setProductAttributes($request);
 
         return redirect()->route('products.index')
             ->with('success', 'Product updated successfully');
@@ -149,25 +117,14 @@ class ProductController extends Controller
      *
      * @param Product $product
      * @return Response
+     * @throws \Exception
      */
     public function destroy(Product $product)
     {
+        $this->authorize(ProductPolicy::MANAGERS, $product->category->id);
         $product->delete();
-
 
         return redirect()->route('products.index')
             ->with('success', 'Product deleted successfully');
-    }
-
-    public function attributes($id)
-    {
-        $product = Product::find($id);
-        $attributes = DB::table('product_attributes_values')
-            ->join('category_attributes', 'product_attributes_values.category_attribute_id', '=', 'category_attributes.id')
-            ->join('products', 'product_attributes_values.product_id', '=', 'products.id')
-            ->where('product_attributes_values.product_id', $product->id)
-            ->select('product_attributes_values.*', 'category_attributes.name', 'product_attributes_values.value')
-            ->get('name', 'value');
-        return response()->json($attributes, 200);
     }
 }
