@@ -45,7 +45,6 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static Builder|User whereRememberToken($value)
  * @method static Builder|User whereUpdatedAt($value)
  * @method static getUsersWithRoleAdminManagers()
- * @method static getUsersByRole(string $role)
  * @method static getEmailsByRole(string $SUPER_USER)
  * @method static getUsersEmailsByRole(string $SUPER_USER)
  * @mixin Eloquent
