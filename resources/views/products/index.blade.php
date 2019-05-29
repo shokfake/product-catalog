@@ -46,18 +46,15 @@
                         </td>
                         <td>
                             <a href="{{ route('products.edit',$product->id)}}" class="btn btn-outline-primary
-                                                 @cannot('update-product', [$product]) disabled @endcannot">Edit</a>
-
-                            @can('delete-product')
+                                                 @cannot('product-edit', [$product]) disabled @endcannot">Edit</a>
                                 <form action="{{ route('products.destroy', $product->id)}}" method="post"
                                       style="display:inline;">
                                     @csrf
                                     @method('DELETE')
                                     <button class="btn btn-outline-danger" type="submit"
-                                            @cannot('delete-product') disabled @endcannot>Delete
+                                            @cannot('product-delete') disabled @endcannot>Delete
                                     </button>
                                 </form>
-                            @endcan
                         </td>
                     </tr>
                 @endforeach

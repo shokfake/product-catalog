@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Category;
 use App\CategoryAttributes;
 use App\Http\Requests\ProductRequest;
-use App\Policies\ProductPolicy;
 use App\Product;
-use App\User;
+use Exception;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,7 +17,7 @@ class ProductController extends Controller
      * Display a listing of the resource.
      *
      */
-    function __construct()
+    public function __construct()
     {
         $this->middleware('permission:product-create', ['only' => ['create', 'store']]);
         $this->middleware('permission:product-edit', ['only' => ['edit', 'update']]);
@@ -29,7 +29,7 @@ class ProductController extends Controller
      *
      * @return Response
      */
-    public function index()
+    public function index(): Response
     {
         $products = Product::with('category')->latest()->paginate(5);
         return view('products.index', compact('products'));
@@ -41,7 +41,7 @@ class ProductController extends Controller
      *
      * @return Response
      */
-    public function create()
+    public function create(): Response
     {
         $user = Auth::user();
         $categories = Category::getCategoriesByUser($user)->toJson();
@@ -55,10 +55,11 @@ class ProductController extends Controller
      *
      * @param ProductRequest $request
      * @return Response
+     * @throws AuthorizationException
      */
-    public function store(ProductRequest $request)
+    public function store(ProductRequest $request): Response
     {
-        $this->authorize('create', $request->get('category'));
+        $this->authorize(Product::GATE_ACTION_WITH_PRODUCT, $request->get('category'));
 
         $product = Product::create([
             'name' => $request->get('name'),
@@ -77,11 +78,12 @@ class ProductController extends Controller
      *
      * @param Product $product
      * @return Response
+     * @throws AuthorizationException
      */
-    public function edit(Product $product)
+    public function edit(Product $product): Response
     {
         $user = Auth::user();
-        $this->authorize(ProductPolicy::MANAGERS, $product->category->id);
+        $this->authorize(Product::GATE_ACTION_WITH_PRODUCT, $product->category->id);
         $categories = Category::getCategoriesByUser($user)->toJson();
         $attributes = CategoryAttributes::getAttributesByProduct($product);
         return view('products.edit', compact('product', 'categories', 'attributes'));
@@ -94,11 +96,12 @@ class ProductController extends Controller
      * @param ProductRequest $request
      * @param Product $product
      * @return Response
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
-    public function update(ProductRequest $request, Product $product)
+    public function update(ProductRequest $request, Product $product): Response
     {
-        $this->authorize(ProductPolicy::MANAGERS, $product->category->id);
+        $this->authorize(Product::GATE_ACTION_WITH_PRODUCT, $product->category->id);
+
         $product = Product::create([
             'name' => $request->get('name'),
             'category_id' => $request->get('category'),
@@ -117,11 +120,11 @@ class ProductController extends Controller
      *
      * @param Product $product
      * @return Response
-     * @throws \Exception
+     * @throws Exception
      */
-    public function destroy(Product $product)
+    public function destroy(Product $product): Response
     {
-        $this->authorize(ProductPolicy::MANAGERS, $product->category->id);
+        $this->authorize(Product::GATE_ACTION_WITH_PRODUCT, $product->category->id);
         $product->delete();
 
         return redirect()->route('products.index')

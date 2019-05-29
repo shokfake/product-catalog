@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 use Intervention\Image\Facades\Image;
 
@@ -39,6 +40,8 @@ use Intervention\Image\Facades\Image;
  */
 class Product extends Model
 {
+    public const GATE_ACTION_WITH_PRODUCT = 'action-with-product';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -51,17 +54,17 @@ class Product extends Model
     /**
      * @return BelongsTo
      */
-    public function category()
+    public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class, 'category_id');
     }
 
-    public function attributes()
+    public function attributes(): HasMany
     {
         return $this->hasMany(ProductAttributesValue::class);
     }
 
-    public static function getNameUploadImage(ProductRequest $request)
+    public static function getNameUploadImage(ProductRequest $request): string
     {
         $imageName = '';
 
@@ -75,8 +78,12 @@ class Product extends Model
         return $imageName;
     }
 
-    public function setProductAttributes(ProductRequest $request)
+    public function setProductAttributes(ProductRequest $request): void
     {
+        if (!$request->has('attributes')) {
+            return;
+        }
+
         foreach ($request->get('attributes') as $attribute) {
             ProductAttributesValue::updateOrCreate(
                 [
@@ -95,6 +102,14 @@ class Product extends Model
     public static function scopeGetProductsAddedToday(Builder $builder)
     {
         return $builder->where('created_at', '>=', Carbon::today()->toDateString())->get();
+    }
+
+    /**
+     * @return Product|Builder|Model|object|null
+     */
+    public function getProductsWithCategory()
+    {
+        return self::with('category')->with('attributes')->whereId($this->id)->first();
     }
 
 }

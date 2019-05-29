@@ -7,6 +7,8 @@ use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 /**
@@ -35,17 +37,23 @@ class Category extends Model
 {
     protected $fillable = ['name', 'user_id'];
 
+    /**
+     * @return mixed
+     */
     public function products()
     {
         return $this->hasMany(Product::class);
     }
 
-    public function attributes()
+    /**
+     * @return HasMany
+     */
+    public function attributes(): HasMany
     {
         return $this->hasMany(CategoryAttributes::class);
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
     }
@@ -58,10 +66,17 @@ class Category extends Model
     public function scopeGetCategoriesByUser(Builder $builder, User $user)
     {
 
-        return $user->hasRole('Super Admin') ? self::all() : $builder->whereUserId($user->id)->get();
+        if ($user->hasRole('Super Admin')) {
+            return self::all();
+        }
+
+        return $builder->whereUserId($user->id)->get();
     }
 
-    public function setCategoryAttributes(CategoryRequest $request)
+    /**
+     * @param CategoryRequest $request
+     */
+    public function setCategoryAttributes(CategoryRequest $request): void
     {
         if (!$request->has('attributes')) {
             return;
@@ -76,9 +91,9 @@ class Category extends Model
                 [
 
                     'category_id' => $this->id,
-                    'name' =>  $attribute['name'],
+                    'name' => $attribute['name'],
                 ]);
-           }
+        }
     }
 
 }

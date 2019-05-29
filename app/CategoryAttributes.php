@@ -25,6 +25,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static Builder|Category getAttributesByProduct(Product $product)
  * @method static getAttributesProduct(Product $product)
  * @mixin \Eloquent
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\ProductAttributesValue[] $values
  */
 class CategoryAttributes extends Model
 {
