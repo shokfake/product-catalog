@@ -2,12 +2,11 @@
 
 namespace App\Providers;
 
-use App\Policies\ProductPolicy;
-use App\Product;
 use App\User;
 use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Laravel\Passport\Passport;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -18,32 +17,25 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         // 'App\Model' => 'App\Policies\ModelPolicy',
-        Product::class => ProductPolicy::class,
     ];
 
     /**
      * Register any authentication / authorization services.
      *
-     * @param \Illuminate\Contracts\Auth\Access\Gate $gate
+     * @param Gate $gate
      * @return void
      */
-    public function boot(Gate $gate)
+    public function boot(Gate $gate): void
     {
-        $this->registerPolicies();
+//        $this->registerPolicies();
 
-//        $gate->define('create-product', function (User $user) {
-//        return ! $user->hasRole('User');
-//        });
-//
-//        $gate->define('update-product', function (User $user, Product $product) {
-//            $categories = $user->categories->pluck('name','id');
-//
-//            return ($user->hasRole('Admin managers') && $categories->has($product->category->id)) || $user->hasRole('Super Admin');
-//        });
-//
-//        $gate->define('delete-product', function (User $user) {
-//           return $user->hasRole('Super Admin');
-//        });
+        $gate->define('action-with-product', function (User $user, int $categoryId){
+            /** @var Collection $categories */
+            $categories = $user->categories->pluck('name', 'id');
+            return ($categories->has($categoryId) && $user->hasRole(User::ADMIN_MANAGERS) )|| $user->hasRole(User::SUPER_USER);
+        });
+
+        Passport::routes();
 
     }
 }
